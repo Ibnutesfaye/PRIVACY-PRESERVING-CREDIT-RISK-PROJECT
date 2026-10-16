@@ -14,5 +14,5 @@ PyJWT==2.10.1
 argon2-cffi==25.1.0
 email-validator==2.2.0
 psycopg[binary]==3.2.10
-pydantic-settings==2.10.1
+pydantic-settings==2.15.0
 prometheus-client==0.22.1
