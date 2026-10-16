@@ -1,0 +1,80 @@
+{
+  "protocol_version": 1,
+  "runs": 3,
+  "samples_packed": 6484,
+  "profile": {
+    "protocol_version": 1,
+    "openfhe_version": "1.5.1",
+    "scheme": "CKKS",
+    "feature_count": 7,
+    "batch_capacity": 8192,
+    "ring_dimension": 32768,
+    "multiplicative_depth": 6,
+    "scaling_modulus_bits": 50,
+    "first_modulus_bits": 60,
+    "scaling_technique": "FLEXIBLEAUTOEXT",
+    "key_switch_technique": "HYBRID",
+    "security_level": "HEStd_128_classic",
+    "secret_key_in_public_bundle": false
+  },
+  "mean_timings": {
+    "key_setup_ms": 710.2418999999903,
+    "encryption_and_serialization_ms": 949.601600000013,
+    "evaluation_and_serialization_ms": 1471.47609999998,
+    "decryption_and_deserialization_ms": 318.0713999999701,
+    "total_ms": 3449.3909999999537
+  },
+  "individual_timings": [
+    {
+      "key_setup_ms": 799.6105000000853,
+      "encryption_and_serialization_ms": 1023.0774999999994,
+      "evaluation_and_serialization_ms": 1474.3733999999904,
+      "decryption_and_deserialization_ms": 405.04539999994904,
+      "total_ms": 3702.106800000024
+    },
+    {
+      "key_setup_ms": 849.0395999999691,
+      "encryption_and_serialization_ms": 971.4705000000095,
+      "evaluation_and_serialization_ms": 1525.722500000029,
+      "decryption_and_deserialization_ms": 259.407699999997,
+      "total_ms": 3605.6403000000046
+    },
+    {
+      "key_setup_ms": 482.07559999991645,
+      "encryption_and_serialization_ms": 854.2568000000301,
+      "evaluation_and_serialization_ms": 1414.332399999921,
+      "decryption_and_deserialization_ms": 289.76109999996424,
+      "total_ms": 3040.425899999832
+    }
+  ],
+  "serialized_sizes": {
+    "context_bytes": 893,
+    "public_key_bytes": 4195845,
+    "evaluation_key_bytes": 17305585,
+    "request_ciphertext_bytes": 29374863,
+    "response_ciphertext_bytes": 1050085,
+    "secret_key_bytes": 2098401
+  },
+  "fhe_metrics": {
+    "accuracy": 0.832048118445404,
+    "precision": 0.7069182389937106,
+    "recall": 0.39633286318758815,
+    "f1": 0.5079078174423859,
+    "roc_auc": 0.8314224034006406
+  },
+  "exact_sigmoid_metrics": {
+    "accuracy": 0.832048118445404,
+    "precision": 0.7069182389937106,
+    "recall": 0.39633286318758815,
+    "f1": 0.5079078174423859,
+    "roc_auc": 0.8314224730037414
+  },
+  "fhe_vs_exact_sigmoid_mean_absolute_error": 0.00461438125479412,
+  "fhe_vs_exact_sigmoid_max_absolute_error": 0.008076624333861415,
+  "classification_difference_count": 0,
+  "privacy_assertions": {
+    "secret_key_in_evaluator_request": false,
+    "evaluator_decrypted_result": false,
+    "server_received_plaintext_features": false
+  }
+}

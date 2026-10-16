@@ -1,0 +1,45 @@
+{
+  "generated_at_seed": 20260807,
+  "fresh_keys_and_ciphertexts": true,
+  "sample_count": 247,
+  "category_counts": {
+    "minimum_range": 8,
+    "maximum_range": 1,
+    "typical": 32,
+    "high_risk": 32,
+    "low_risk": 31,
+    "boundary": 64,
+    "random_valid": 79
+  },
+  "ckks_profile": {
+    "protocol_version": 1,
+    "openfhe_version": "1.5.1",
+    "scheme": "CKKS",
+    "feature_count": 7,
+    "batch_capacity": 8192,
+    "ring_dimension": 32768,
+    "multiplicative_depth": 6,
+    "scaling_modulus_bits": 50,
+    "first_modulus_bits": 60,
+    "scaling_technique": "FLEXIBLEAUTOEXT",
+    "key_switch_technique": "HYBRID",
+    "security_level": "HEStd_128_classic",
+    "secret_key_in_public_bundle": false
+  },
+  "plain_circuit_vs_fhe": {
+    "mean_absolute_error": 1.4957957078307398e-11,
+    "median_absolute_error": 2.766911699758623e-12,
+    "maximum_absolute_error": 1.758237999638368e-10,
+    "standard_deviation_absolute_error": 3.0080200572426827e-11,
+    "classification_agreement": 1.0,
+    "threshold_crossing_mismatches": 0
+  },
+  "logit_range": [
+    -5.462189490757259,
+    5.505698605265037
+  ],
+  "expected_score_range": [
+    -0.0021685977797972766,
+    1.002222985535679
+  ]
+}

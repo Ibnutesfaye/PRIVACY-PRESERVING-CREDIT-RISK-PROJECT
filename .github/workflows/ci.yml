@@ -1,0 +1,137 @@
+name: cipherscore-ci
+on:
+  push:
+    branches: [main, "codex/**"]
+  pull_request:
+permissions:
+  contents: read
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  backend:
+    runs-on: ubuntu-24.04
+    services:
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_DB: cipherscore_ci
+          POSTGRES_USER: cipherscore_ci
+          POSTGRES_PASSWORD: ci-only-password
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U cipherscore_ci -d cipherscore_ci"
+          --health-interval 10s --health-timeout 5s --health-retries 10
+    env:
+      ADMIN_DATABASE_URL: postgresql+psycopg://cipherscore_ci:ci-only-password@127.0.0.1:5432/cipherscore_ci
+      ADMIN_JWT_SECRET: ci-only-jwt-secret-at-least-thirty-two-characters
+      APPLICATION_ENVIRONMENT: test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12", cache: pip }
+      - run: python -m pip install --requirement requirements.txt
+      - name: Reproduce approved ML artifacts
+        run: |
+          python -m ml.preprocess
+          python -m ml.train
+          python -m ml.extract_model
+          python -m ml.polynomial
+          python -m ml.validate_artifacts
+      - name: Validate migrations
+        run: |
+          python -m alembic upgrade head
+          python -m alembic current
+      - run: python -m pytest -q
+  frontend:
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: "22", cache: npm, cache-dependency-path: frontend/package-lock.json }
+      - run: npm ci
+      - run: npm run lint
+      - run: npm test
+      - run: npm run build
+  container-build:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: deployment/backend.Dockerfile
+          push: false
+          tags: cipherscore-backend:ci
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: deployment/frontend.Dockerfile
+          push: false
+          tags: cipherscore-frontend:ci
+  compose-integration:
+    runs-on: ubuntu-24.04
+    env:
+      APPLICATION_ALLOWED_ORIGINS: https://127.0.0.1:8443
+    steps:
+      - uses: actions/checkout@v4
+      - name: Create ephemeral CI secrets and certificate
+        run: |
+          mkdir -p deployment/secrets deployment/certs deployment/openfhe-public-profile
+          printf '%s' 'ci-postgres-password-only' > deployment/secrets/postgres_password.txt
+          printf '%s' 'postgresql+psycopg://credit_risk_app:ci-postgres-password-only@postgres:5432/privacy_credit_risk' > deployment/secrets/database_url.txt
+          printf '%s' 'ci-jwt-secret-at-least-thirty-two-characters-only' > deployment/secrets/admin_jwt_secret.txt
+          printf '%s' 'ci-metrics-token-at-least-thirty-two-characters' > deployment/secrets/metrics_token.txt
+          printf '%s\n' 'user default off' 'user cipherscore on >ci-redis-password ~* +@all' > deployment/secrets/redis_acl.txt
+          openssl req -x509 -newkey rsa:2048 -nodes -days 1 -subj '/CN=127.0.0.1' -keyout deployment/certs/tls.key -out deployment/certs/tls.crt
+      - run: docker compose config --quiet
+      - run: docker compose build backend frontend
+      - name: Generate ephemeral public OpenFHE profile inside built image
+        run: |
+          image="$(docker compose images -q backend)"
+          docker create --name profile-generator --entrypoint /bin/sh "$image" -c 'mkdir -p /tmp/public /tmp/private && /app/openfhe/day2-build-local/fhe_protocol.exe setup /tmp/public /tmp/private'
+          docker start -a profile-generator
+          docker cp profile-generator:/tmp/public/. deployment/openfhe-public-profile/
+          docker rm profile-generator
+          test ! -e deployment/openfhe-public-profile/secret-key.bin
+      - name: Start and validate pilot stack
+        run: |
+          docker compose up -d
+          for attempt in $(seq 1 60); do
+            curl --fail --insecure --silent https://127.0.0.1:8443/api/v1/system/readiness && break
+            sleep 2
+          done
+          curl --fail --insecure --silent https://127.0.0.1:8443/ >/dev/null
+          docker compose exec -T redis sh -c 'redis-cli --user cipherscore --pass "$(sed -n "s/.*>//;s/ .*//p" /run/secrets/redis_acl)" ping' | grep PONG
+          docker compose exec -T prometheus wget -qO- http://127.0.0.1:9090/-/ready | grep ready
+          docker compose ps
+      - if: always()
+        run: docker compose logs --no-color | sed -E 's#(postgresql[^ ]*://)[^@]+@#\1[REDACTED]@#g'
+      - if: always()
+        run: docker compose down -v
+  k6-smoke:
+    runs-on: ubuntu-24.04
+    env:
+      ADMIN_DATABASE_URL: sqlite:////tmp/cipherscore-k6.sqlite
+      ADMIN_JWT_SECRET: ci-only-jwt-secret-at-least-thirty-two-characters
+      APPLICATION_ENVIRONMENT: test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12", cache: pip }
+      - run: python -m pip install --requirement requirements.txt
+      - uses: grafana/setup-k6-action@v1
+      - name: Start isolated API
+        run: |
+          python -c 'from backend.app.database import Base,engine; Base.metadata.create_all(engine)'
+          python -m uvicorn backend.app.main:app --host 127.0.0.1 --port 8000 > /tmp/uvicorn.log 2>&1 &
+          for attempt in $(seq 1 30); do curl --fail --silent http://127.0.0.1:8000/api/v1/system/liveness && break; sleep 1; done
+      - run: BASE_URL=http://127.0.0.1:8000 k6 run tests/load/k6-smoke.js
+      - if: always()
+        run: cat /tmp/uvicorn.log

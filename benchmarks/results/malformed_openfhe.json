@@ -1,0 +1,52 @@
+{
+  "status": "PARTIAL",
+  "timeout_seconds": 60,
+  "cases": {
+    "corrupted_ciphertext": {
+      "exit_code": 1,
+      "failed_safely": true,
+      "output_redacted": true
+    },
+    "truncated_ciphertext": {
+      "exit_code": 1,
+      "failed_safely": true,
+      "output_redacted": true
+    },
+    "empty_ciphertext": {
+      "exit_code": 1,
+      "failed_safely": true,
+      "output_redacted": true
+    },
+    "random_bytes": {
+      "exit_code": 1,
+      "failed_safely": true,
+      "output_redacted": true
+    },
+    "incompatible_serialization": {
+      "exit_code": 1,
+      "failed_safely": true,
+      "output_redacted": true
+    },
+    "wrong_context": {
+      "exit_code": 0,
+      "failed_safely": false,
+      "output_redacted": true
+    },
+    "wrong_evaluation_key": {
+      "exit_code": 1,
+      "failed_safely": true,
+      "output_redacted": true
+    },
+    "unexpected_slot_count": {
+      "exit_code": 1,
+      "failed_safely": true,
+      "output_redacted": true
+    },
+    "wrong_public_key": {
+      "exit_code": 1,
+      "failed_safely": true,
+      "output_redacted": true
+    }
+  },
+  "limitation": "A separately generated context with identical CKKS parameters is serialization-compatible; API profile/model checks do not cryptographically bind ciphertexts to a context fingerprint."
+}

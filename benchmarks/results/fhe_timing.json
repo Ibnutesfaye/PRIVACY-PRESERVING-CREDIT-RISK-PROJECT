@@ -1,0 +1,14 @@
+{
+  "scheme": "CKKS",
+  "polynomial_degree": 7,
+  "samples_packed": 6484,
+  "ring_dimension": 32768,
+  "key_generation_ms": 349.85610000000003,
+  "encryption_ms": 613.09879999999998,
+  "evaluation_ms": 947.43119999999999,
+  "decryption_ms": 101.54000000000001,
+  "total_latency_ms": 2343.7044999999998,
+  "one_input_ciphertext_bytes": 4195889,
+  "seven_input_ciphertexts_bytes": 29371223,
+  "server_receives_plaintext_features": false
+}

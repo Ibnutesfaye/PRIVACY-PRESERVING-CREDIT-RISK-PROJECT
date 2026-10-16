@@ -1,0 +1,12 @@
+{
+  "scheme": "CKKS",
+  "openfhe_version": "1.5.1",
+  "ring_dimension": 16384,
+  "feature_count": 7,
+  "plain_logit": -0.75302841458015779,
+  "fhe_decrypted_logit": -0.75302841458004366,
+  "absolute_error": 1.1413092693146609e-13,
+  "relative_error": 1.5156257681869608e-13,
+  "secret_key_available_to_server": false,
+  "verified": true
+}

@@ -1,0 +1,22 @@
+{
+  "accuracy": 0.832048118445404,
+  "precision": 0.7069182389937106,
+  "recall": 0.39633286318758815,
+  "f1": 0.5079078174423859,
+  "roc_auc": 0.8314224730037414,
+  "confusion_matrix": [
+    [
+      4833,
+      233
+    ],
+    [
+      856,
+      562
+    ]
+  ],
+  "training_seconds": 0.06525709999914397,
+  "total_test_inference_seconds": 0.0010142999999516178,
+  "mean_inference_seconds_per_sample": 1.5643121529173624e-07,
+  "training_samples": 25932,
+  "test_samples": 6484
+}

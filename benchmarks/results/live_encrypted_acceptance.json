@@ -1,0 +1,23 @@
+{
+  "status": "PASS",
+  "transport": "real HTTP on isolated loopback service",
+  "authenticated": true,
+  "authorized_ciphertext_api": true,
+  "prediction_id_present": true,
+  "fhe_metric_linked": true,
+  "plaintext_circuit_score": 0.2798067453632839,
+  "decrypted_fhe_score": 0.27980674535678396,
+  "absolute_error": 6.499967231121673e-12,
+  "classification_agreement": true,
+  "secret_key_in_server_profile": false,
+  "server_profile_files": [
+    "context.bin",
+    "evaluation-mult-keys.bin",
+    "profile.json",
+    "public-key.bin"
+  ],
+  "plaintext_sentinels_in_database": false,
+  "remaining_evaluator_temp_entries": 0,
+  "plaintext_sentinels_in_server_logs": false,
+  "secret_material_in_server_logs": false
+}

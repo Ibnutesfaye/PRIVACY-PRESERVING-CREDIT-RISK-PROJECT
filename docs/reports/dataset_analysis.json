@@ -1,0 +1,188 @@
+{
+  "source": "C:\\PRIVACY-PRESERVING CREDIT RISK PROJECT\\data\\raw\\credit_risk_dataset.csv",
+  "rows": 32581,
+  "columns": 12,
+  "column_names": [
+    "person_age",
+    "person_income",
+    "person_home_ownership",
+    "person_emp_length",
+    "loan_intent",
+    "loan_grade",
+    "loan_amnt",
+    "loan_int_rate",
+    "loan_status",
+    "loan_percent_income",
+    "cb_person_default_on_file",
+    "cb_person_cred_hist_length"
+  ],
+  "data_types": {
+    "person_age": "int64",
+    "person_income": "int64",
+    "person_home_ownership": "object",
+    "person_emp_length": "float64",
+    "loan_intent": "object",
+    "loan_grade": "object",
+    "loan_amnt": "int64",
+    "loan_int_rate": "float64",
+    "loan_status": "int64",
+    "loan_percent_income": "float64",
+    "cb_person_default_on_file": "object",
+    "cb_person_cred_hist_length": "int64"
+  },
+  "missing_values": {
+    "person_age": 0,
+    "person_income": 0,
+    "person_home_ownership": 0,
+    "person_emp_length": 895,
+    "loan_intent": 0,
+    "loan_grade": 0,
+    "loan_amnt": 0,
+    "loan_int_rate": 3116,
+    "loan_status": 0,
+    "loan_percent_income": 0,
+    "cb_person_default_on_file": 0,
+    "cb_person_cred_hist_length": 0
+  },
+  "duplicate_rows": 165,
+  "target_distribution": {
+    "0": 25473,
+    "1": 7108
+  },
+  "categorical_values": {
+    "person_home_ownership": [
+      "MORTGAGE",
+      "OTHER",
+      "OWN",
+      "RENT"
+    ],
+    "loan_intent": [
+      "DEBTCONSOLIDATION",
+      "EDUCATION",
+      "HOMEIMPROVEMENT",
+      "MEDICAL",
+      "PERSONAL",
+      "VENTURE"
+    ],
+    "loan_grade": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F",
+      "G"
+    ],
+    "cb_person_default_on_file": [
+      "N",
+      "Y"
+    ]
+  },
+  "numerical_ranges": {
+    "person_age": {
+      "min": 20,
+      "max": 144,
+      "mean": 27.73459992019889,
+      "median": 26.0
+    },
+    "person_income": {
+      "min": 4000,
+      "max": 6000000,
+      "mean": 66074.84846996715,
+      "median": 55000.0
+    },
+    "person_emp_length": {
+      "min": 0.0,
+      "max": 123.0,
+      "mean": 4.789686296787225,
+      "median": 4.0
+    },
+    "loan_amnt": {
+      "min": 500,
+      "max": 35000,
+      "mean": 9589.371105859243,
+      "median": 8000.0
+    },
+    "loan_int_rate": {
+      "min": 5.42,
+      "max": 23.22,
+      "mean": 11.011694892245036,
+      "median": 10.99
+    },
+    "loan_status": {
+      "min": 0,
+      "max": 1,
+      "mean": 0.21816396059052823,
+      "median": 0.0
+    },
+    "loan_percent_income": {
+      "min": 0.0,
+      "max": 0.83,
+      "mean": 0.1702034928332464,
+      "median": 0.15
+    },
+    "cb_person_cred_hist_length": {
+      "min": 2,
+      "max": 30,
+      "mean": 5.804211043246064,
+      "median": 4.0
+    }
+  },
+  "iqr_outliers": {
+    "person_age": {
+      "iqr_lower_bound": 12.5,
+      "iqr_upper_bound": 40.5,
+      "count": 1494
+    },
+    "person_income": {
+      "iqr_lower_bound": -22550.0,
+      "iqr_upper_bound": 140250.0,
+      "count": 1484
+    },
+    "person_emp_length": {
+      "iqr_lower_bound": -5.5,
+      "iqr_upper_bound": 14.5,
+      "count": 853
+    },
+    "loan_amnt": {
+      "iqr_lower_bound": -5800.0,
+      "iqr_upper_bound": 23000.0,
+      "count": 1689
+    },
+    "loan_int_rate": {
+      "iqr_lower_bound": -0.45500000000000007,
+      "iqr_upper_bound": 21.825000000000003,
+      "count": 6
+    },
+    "loan_status": {
+      "iqr_lower_bound": 0.0,
+      "iqr_upper_bound": 0.0,
+      "count": 7108
+    },
+    "loan_percent_income": {
+      "iqr_lower_bound": -0.12000000000000002,
+      "iqr_upper_bound": 0.44000000000000006,
+      "count": 651
+    },
+    "cb_person_cred_hist_length": {
+      "iqr_lower_bound": -4.5,
+      "iqr_upper_bound": 15.5,
+      "count": 1142
+    }
+  },
+  "invalid_value_checks": {
+    "person_age_outside_18_100": 5,
+    "person_income_nonpositive": 0,
+    "person_emp_length_negative": 0,
+    "loan_amnt_nonpositive": 0,
+    "loan_int_rate_outside_0_100": 0,
+    "loan_percent_income_outside_0_1": 0,
+    "credit_history_nonpositive": 0,
+    "target_not_binary": 0
+  },
+  "notes": {
+    "leakage": "loan_grade may encode underwriting decisions and is excluded from the first FHE model.",
+    "missing_data": "Numeric missing values are imputed using medians learned from training data only.",
+    "duplicates": "Exact duplicates are removed before splitting to avoid cross-split duplication."
+  }
+}
