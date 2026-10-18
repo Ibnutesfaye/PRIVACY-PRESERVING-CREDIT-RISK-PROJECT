@@ -2,6 +2,7 @@ import http from 'k6/http'
 import { check, sleep } from 'k6'
 
 export const options = {
+  insecureSkipTLSVerify: true,
   scenarios: {
     single_user: { executor: 'constant-vus', vus: 1, duration: '30s' },
     ten_users: { executor: 'constant-vus', vus: 10, startTime: '35s', duration: '30s' },

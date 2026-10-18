@@ -79,16 +79,18 @@ def upgrade():
         sa.Column("legal_hold_required", sa.Boolean(), nullable=False), sa.Column("updated_by", sa.String(36), sa.ForeignKey("admin_users.id", ondelete="RESTRICT"), nullable=False),
         sa.Column("updated_at", sa.DateTime(timezone=True), nullable=False), sa.UniqueConstraint("organization_id", "record_type", name="uq_retention_organization_record_type"))
     op.create_index("ix_retention_policies_organization_id", "retention_policies", ["organization_id"])
-    for column, foreign in (("application_id", "loan_applications.id"), ("organization_id", "organizations.id"), ("branch_id", "branches.id"), ("requested_by", "admin_users.id")):
-        op.add_column("prediction_metadata", sa.Column(column, sa.String(36), nullable=True))
-        op.create_foreign_key(f"fk_prediction_metadata_{column}", "prediction_metadata", foreign.split('.')[0], [column], ["id"], ondelete="SET NULL")
-        op.create_index(f"ix_prediction_metadata_{column}", "prediction_metadata", [column])
+    with op.batch_alter_table("prediction_metadata") as batch_op:
+        for column, foreign in (("application_id", "loan_applications.id"), ("organization_id", "organizations.id"), ("branch_id", "branches.id"), ("requested_by", "admin_users.id")):
+            batch_op.add_column(sa.Column(column, sa.String(36), nullable=True))
+            batch_op.create_foreign_key(f"fk_prediction_metadata_{column}", foreign.split('.')[0], [column], ["id"], ondelete="SET NULL")
+            batch_op.create_index(f"ix_prediction_metadata_{column}", [column])
 
 
 def downgrade():
-    for column in ("requested_by", "branch_id", "organization_id", "application_id"):
-        op.drop_index(f"ix_prediction_metadata_{column}", table_name="prediction_metadata")
-        op.drop_constraint(f"fk_prediction_metadata_{column}", "prediction_metadata", type_="foreignkey")
-        op.drop_column("prediction_metadata", column)
+    with op.batch_alter_table("prediction_metadata") as batch_op:
+        for column in ("requested_by", "branch_id", "organization_id", "application_id"):
+            batch_op.drop_index(f"ix_prediction_metadata_{column}")
+            batch_op.drop_constraint(f"fk_prediction_metadata_{column}", type_="foreignkey")
+            batch_op.drop_column(column)
     for table in ("retention_policies", "crypto_parameter_profiles", "decision_records", "workflow_history", "loan_applications", "consent_records", "organization_memberships", "branches", "organizations"):
         op.drop_table(table)

@@ -157,9 +157,9 @@ def readiness() -> JSONResponse:
         checks["database"] = True
     except Exception:
         engine.dispose()
-    required_checks = [checks["database"], checks["openfhe_evaluator"]]
+    required_checks = [checks["database"]]
     if settings.application_environment == "production":
-        required_checks.append(checks["encrypted_profile"])
+        required_checks.extend([checks["openfhe_evaluator"], checks["encrypted_profile"]])
     ready = all(required_checks)
     DATABASE_HEALTH.set(1 if checks["database"] else 0)
     FHE_WORKER_READINESS.set(1 if checks["openfhe_evaluator"] and checks["encrypted_profile"] else 0)

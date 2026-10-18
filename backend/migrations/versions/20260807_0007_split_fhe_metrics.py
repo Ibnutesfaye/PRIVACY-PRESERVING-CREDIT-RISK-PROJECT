@@ -10,12 +10,14 @@ depends_on = None
 
 
 def upgrade():
-    op.alter_column("fhe_metrics", "encryption_time_ms", existing_type=sa.Float(), nullable=True)
-    op.alter_column("fhe_metrics", "decryption_time_ms", existing_type=sa.Float(), nullable=True)
+    with op.batch_alter_table("fhe_metrics") as batch_op:
+        batch_op.alter_column("encryption_time_ms", existing_type=sa.Float(), nullable=True)
+        batch_op.alter_column("decryption_time_ms", existing_type=sa.Float(), nullable=True)
 
 
 def downgrade():
     op.execute("UPDATE fhe_metrics SET encryption_time_ms = 0 WHERE encryption_time_ms IS NULL")
     op.execute("UPDATE fhe_metrics SET decryption_time_ms = 0 WHERE decryption_time_ms IS NULL")
-    op.alter_column("fhe_metrics", "encryption_time_ms", existing_type=sa.Float(), nullable=False)
-    op.alter_column("fhe_metrics", "decryption_time_ms", existing_type=sa.Float(), nullable=False)
+    with op.batch_alter_table("fhe_metrics") as batch_op:
+        batch_op.alter_column("encryption_time_ms", existing_type=sa.Float(), nullable=False)
+        batch_op.alter_column("decryption_time_ms", existing_type=sa.Float(), nullable=False)

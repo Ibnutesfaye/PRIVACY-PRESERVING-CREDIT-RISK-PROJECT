@@ -23,6 +23,7 @@ services:
     networks: [data]
     restart: unless-stopped
   backend:
+    image: cipherscore-backend:pilot
     build:
       context: .
       dockerfile: deployment/backend.Dockerfile
@@ -51,6 +52,7 @@ services:
     restart: unless-stopped
     security_opt: ["no-new-privileges:true"]
   frontend:
+    image: cipherscore-frontend:pilot
     build:
       context: .
       dockerfile: deployment/frontend.Dockerfile
