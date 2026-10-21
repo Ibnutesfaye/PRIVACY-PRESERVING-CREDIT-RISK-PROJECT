@@ -19,11 +19,23 @@ class FHEPredictionService:
     """Trusted client gateway around the isolated OpenFHE evaluator."""
 
     def __init__(self) -> None:
-        self.imputer = joblib.load(ARTIFACTS_DIR / "imputer.pkl")
-        self.scaler = joblib.load(ARTIFACTS_DIR / "scaler.pkl")
+        self._imputer = None
+        self._scaler = None
         self.executable = PROJECT_ROOT / "openfhe" / "day2-build-local" / "day3_fhe_predict.exe"
         self.runtime_dir = PROJECT_ROOT / "backend" / ".runtime"
         self.runtime_dir.mkdir(parents=True, exist_ok=True)
+
+    @property
+    def imputer(self):
+        if self._imputer is None:
+            self._imputer = joblib.load(ARTIFACTS_DIR / "imputer.pkl")
+        return self._imputer
+
+    @property
+    def scaler(self):
+        if self._scaler is None:
+            self._scaler = joblib.load(ARTIFACTS_DIR / "scaler.pkl")
+        return self._scaler
 
     def _preprocess(self, request: CreditRiskRequest) -> np.ndarray:
         values = pd.DataFrame(

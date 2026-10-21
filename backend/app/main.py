@@ -140,7 +140,7 @@ def health() -> dict[str, object]:
 
 
 @app.get("/api/v1/system/liveness", tags=["system"], summary="Process liveness probe")
-def liveness() -> dict[str, str]:
+async def liveness() -> dict[str, str]:
     return {"status": "alive", "service": settings.application_service_name}
 
 
