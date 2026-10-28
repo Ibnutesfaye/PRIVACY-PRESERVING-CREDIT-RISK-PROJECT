@@ -13,6 +13,7 @@ while time.time() < deadline:
             conn.execute(text("SELECT 1"))
         sys.exit(0)
     except Exception:
+        engine.dispose()
         time.sleep(1)
 sys.exit(1)
 '
